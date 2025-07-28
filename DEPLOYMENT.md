@@ -106,19 +106,44 @@ echo "Function App URL: https://$FUNCTION_APP_NAME.azurewebsites.net"
 
 ## Testing Deployed Functions
 
-Once deployed, test your endpoints:
+Once deployed, you need to get your function key and update the web interface:
 
+### 1. Get Function Key
 ```bash
-# Health check
-curl https://YOUR_FUNCTION_APP.azurewebsites.net/api/health
+# Get your function authentication key
+az functionapp keys list --name YOUR_FUNCTION_APP --resource-group deltashare-rg
+```
+
+### 2. Update Web Interface Function Key
+**IMPORTANT**: After deployment, you must update the function key in the web interface:
+
+1. In `function_app.py`, find line ~301:
+   ```javascript
+   const functionKey = 'YOUR_FUNCTION_KEY_HERE';
+   ```
+
+2. Replace `YOUR_FUNCTION_KEY_HERE` with your actual function key from step 1
+
+3. Redeploy the function:
+   ```bash
+   func azure functionapp publish YOUR_FUNCTION_APP --python
+   ```
+
+### 3. Test Endpoints
+```bash
+# Health check (replace YOUR_FUNCTION_KEY with actual key)
+curl "https://YOUR_FUNCTION_APP.azurewebsites.net/api/health?code=YOUR_FUNCTION_KEY"
+
+# Web interface (replace YOUR_FUNCTION_KEY with actual key)
+https://YOUR_FUNCTION_APP.azurewebsites.net/api/web_interface?code=YOUR_FUNCTION_KEY
 
 # Metadata endpoint
-curl -X POST https://YOUR_FUNCTION_APP.azurewebsites.net/api/metadata \
+curl -X POST "https://YOUR_FUNCTION_APP.azurewebsites.net/api/metadata?code=YOUR_FUNCTION_KEY" \
     -H "Content-Type: application/octet-stream" \
     --data-binary "mock config content"
 
 # Download endpoint
-curl -X POST https://YOUR_FUNCTION_APP.azurewebsites.net/api/download \
+curl -X POST "https://YOUR_FUNCTION_APP.azurewebsites.net/api/download?code=YOUR_FUNCTION_KEY" \
     -H "Content-Type: application/json" \
     -d '{
         "config": "mock config",
