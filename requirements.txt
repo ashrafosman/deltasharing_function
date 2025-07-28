@@ -1,0 +1,4 @@
+azure-functions
+delta-sharing
+pandas
+databricks-sdk
