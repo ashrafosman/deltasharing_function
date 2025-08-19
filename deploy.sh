@@ -55,12 +55,10 @@ az functionapp create \
     --resource-group $RESOURCE_GROUP \
     --name $FUNCTION_APP_NAME \
     --storage-account $STORAGE_NAME \
+    --flexconsumption-location $LOCATION \
     --runtime python \
     --runtime-version 3.11 \
     --functions-version 4 \
-    --os-type linux \
-    --sku FC1 \
-    --location $LOCATION \
     --output table
 echo ""
 

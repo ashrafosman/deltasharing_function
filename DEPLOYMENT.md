@@ -47,12 +47,10 @@ az functionapp create \
     --resource-group deltashare-rg \
     --name deltashare-functions-$(date +%s) \
     --storage-account deltasharestorage$(date +%s) \
+    --flexconsumption-location westus \
     --runtime python \
     --runtime-version 3.11 \
-    --functions-version 4 \
-    --os-type linux \
-    --sku FC1 \
-    --location westus
+    --functions-version 4
 ```
 
 ### 4. Deploy Function Code
@@ -92,12 +90,10 @@ az functionapp create \
     --resource-group $RESOURCE_GROUP \
     --name $FUNCTION_APP_NAME \
     --storage-account $STORAGE_NAME \
+    --flexconsumption-location $LOCATION \
     --runtime python \
     --runtime-version 3.11 \
-    --functions-version 4 \
-    --os-type linux \
-    --sku FC1 \
-    --location $LOCATION
+    --functions-version 4
 
 echo "Deploying functions..."
 func azure functionapp publish $FUNCTION_APP_NAME
