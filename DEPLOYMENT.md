@@ -20,7 +20,7 @@ az login
 ```
 
 ### 3. Set your subscription (if you have multiple)
-```bash
+```bash/Users/ashraf.osman/Documents/Work/Dev/Deltashare/deltasharing_function/deploy.sh
 az account list --output table
 az account set --subscription "YOUR_SUBSCRIPTION_ID"
 ```
@@ -29,29 +29,30 @@ az account set --subscription "YOUR_SUBSCRIPTION_ID"
 
 ### 1. Create Resource Group
 ```bash
-az group create --name deltashare-rg --location eastus
+az group create --name deltashare-rg --location westus
 ```
 
 ### 2. Create Storage Account
 ```bash
 az storage account create \
     --name deltasharestorage$(date +%s) \
-    --location eastus \
+    --location westus \
     --resource-group deltashare-rg \
     --sku Standard_LRS
 ```
 
-### 3. Create Function App
+### 3. Create Function App (Flex Consumption)
 ```bash
 az functionapp create \
     --resource-group deltashare-rg \
-    --consumption-plan-location eastus \
+    --name deltashare-functions-$(date +%s) \
+    --storage-account deltasharestorage$(date +%s) \
     --runtime python \
     --runtime-version 3.11 \
     --functions-version 4 \
-    --name deltashare-functions-$(date +%s) \
-    --storage-account deltasharestorage$(date +%s) \
-    --os-type linux
+    --os-type linux \
+    --sku FC1 \
+    --location westus
 ```
 
 ### 4. Deploy Function Code
@@ -72,7 +73,7 @@ You can also use this automated script that creates everything at once:
 
 # Set variables
 RESOURCE_GROUP="deltashare-rg"
-LOCATION="eastus"
+LOCATION="westus"
 STORAGE_NAME="deltashare$(date +%s)"
 FUNCTION_APP_NAME="deltashare-functions-$(date +%s)"
 
@@ -89,13 +90,14 @@ az storage account create \
 echo "Creating function app..."
 az functionapp create \
     --resource-group $RESOURCE_GROUP \
-    --consumption-plan-location $LOCATION \
+    --name $FUNCTION_APP_NAME \
+    --storage-account $STORAGE_NAME \
     --runtime python \
     --runtime-version 3.11 \
     --functions-version 4 \
-    --name $FUNCTION_APP_NAME \
-    --storage-account $STORAGE_NAME \
-    --os-type linux
+    --os-type linux \
+    --sku FC1 \
+    --location $LOCATION
 
 echo "Deploying functions..."
 func azure functionapp publish $FUNCTION_APP_NAME
@@ -169,8 +171,8 @@ Enable authentication in Azure portal:
 
 ## Cost Optimization
 
-- Use **Consumption Plan** for sporadic usage
-- Use **Premium Plan** for consistent traffic
+- Use **Flex Consumption Plan** for optimal cost-performance balance with automatic scaling
+- Use **Premium Plan** for consistent high-traffic workloads requiring VNet integration
 - Monitor costs in Azure Cost Management
 
 ## Monitoring

@@ -5,7 +5,7 @@ set -e
 
 # Configuration
 RESOURCE_GROUP="deltashare-rg"
-LOCATION="eastus"
+LOCATION="westus"
 STORAGE_NAME="deltashare$(date +%s)"
 FUNCTION_APP_NAME="deltashare-functions-$(date +%s)"
 
@@ -50,16 +50,17 @@ az storage account create \
 echo ""
 
 # Create function app
-echo "⚡ Creating function app..."
+echo "⚡ Creating function app with Flex Consumption..."
 az functionapp create \
     --resource-group $RESOURCE_GROUP \
-    --consumption-plan-location $LOCATION \
+    --name $FUNCTION_APP_NAME \
+    --storage-account $STORAGE_NAME \
     --runtime python \
     --runtime-version 3.11 \
     --functions-version 4 \
-    --name $FUNCTION_APP_NAME \
-    --storage-account $STORAGE_NAME \
     --os-type linux \
+    --sku FC1 \
+    --location $LOCATION \
     --output table
 echo ""
 
